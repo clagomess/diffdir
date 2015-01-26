@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 import hashlib
 import sys
@@ -11,16 +13,16 @@ if sys.argv[1:].__len__() == 2:
     diretorio_esquerda = sys.argv[1:][0]
     diretorio_direita = sys.argv[1:][1]
 else:
-    print "Informe Os parametros de Diretorio:"
-    print "diffdir.py dir_esquerdo dir_direito"
+    print u"Informe os parâmetros de diretório:\n"
+    print "> diffdir.py dir_esquerdo dir_direito"
     exit()
 
 if not os.path.isdir(diretorio_esquerda):
-    print "Diretorio Esquerdo Invalido"
+    print u"Diretório Esquerdo Inválido"
     exit()
 
 if not os.path.isdir(diretorio_direita):
-    print "Diretorio Direito Invalido"
+    print u"Diretório Direito Inválido"
     exit()
 
 
@@ -47,7 +49,7 @@ def get_row(flag, esquerdo, meio, direito):
 
 
 # Monta List de arquivos
-print "# Varrendo Diretorios:"
+print u"# Varrendo Diretórios:"
 print "-> Esquerda"
 arquivos = []
 arquivos_esquerda = get_lista_arquivos(diretorio_esquerda)
@@ -64,14 +66,14 @@ for filepath in arquivos_esquerda:
         len_field_esquerda = filepath.__len__()
 
 # Compara arquivos
-print "\n\n# Iniciando Comparacao: "
-print "-> ~%s Comparacoes" % arquivos_esquerda.__len__()
+print u"\n\n# Iniciando Comparação: "
+print u"-> ~%s Comparações" % arquivos_esquerda.__len__()
 idx = 1
 for filepath_esquerda in arquivos_esquerda:
     file_esquerda = filepath_esquerda.replace(diretorio_esquerda, "")
     file_direita_existe = False
 
-    print "-> %s de %s -- %s" % (idx, arquivos_esquerda.__len__(), file_esquerda)
+    print u"-> %s de %s -- %s" % (idx, arquivos_esquerda.__len__(), file_esquerda)
 
     for filepath_direita in arquivos_direita:
         file_direita = filepath_direita.replace(diretorio_direita, "")
@@ -95,6 +97,7 @@ for filepath_esquerda in arquivos_esquerda:
     idx += 1
 
 # Verifica arquivos faltantes
+print u"\n\n# Verificando arquivos novos: "
 for filepath_direita in arquivos_direita:
     file_direita = filepath_direita.replace(diretorio_direita, "")
     file_esquerda_existe = False
@@ -107,11 +110,12 @@ for filepath_direita in arquivos_direita:
 
     if not file_esquerda_existe:
         out_diff += get_row('-', '?', '<-- ', filepath_direita)
+        print u"-> %s" % file_direita
 
 
 fp = open("diff_result.txt", 'w')
 fp.write(out_diff)
 fp.close()
 
-print "\n\n# Comparacao Finalizada:"
+print u"\n\n# Comparação Finalizada:"
 print "-> Ver Resultado em diff_result.txt"
