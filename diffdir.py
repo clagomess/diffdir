@@ -1,10 +1,27 @@
 #!/usr/bin/python
 import os
 import hashlib
+import sys
 
-diretorio_esquerda = "/var/www/html/sbmt/"
-diretorio_direita = "/var/www/html/allsete_sbmt/"
-out_diff = "## Resultado: \n\n"
+diretorio_esquerda = None
+diretorio_direita = None
+out_diff = "# Resultado: \n"
+
+if sys.argv[1:].__len__() == 2:
+    diretorio_esquerda = sys.argv[1:][0]
+    diretorio_direita = sys.argv[1:][1]
+else:
+    print "Informe Os parametros de Diretorio:"
+    print "diffdir.py dir_esquerdo dir_direito"
+    exit()
+
+if not os.path.isdir(diretorio_esquerda):
+    print "Diretorio Esquerdo Invalido"
+    exit()
+
+if not os.path.isdir(diretorio_direita):
+    print "Diretorio Direito Invalido"
+    exit()
 
 
 # Funcao para varrer diretorio
@@ -30,10 +47,15 @@ def get_row(flag, esquerdo, meio, direito):
 
 
 # Monta List de arquivos
+print "# Varrendo Diretorios:"
+print "-> Esquerda"
 arquivos = []
 arquivos_esquerda = get_lista_arquivos(diretorio_esquerda)
+print "-> %s Arquivo(s)" % arquivos_esquerda.__len__()
+print "-> Direita"
 arquivos = []
 arquivos_direita = get_lista_arquivos(diretorio_direita)
+print "-> %s Arquivo(s)" % arquivos_direita.__len__()
 
 # Pega os maiores tamanho de campo
 len_field_esquerda = 0
@@ -42,9 +64,14 @@ for filepath in arquivos_esquerda:
         len_field_esquerda = filepath.__len__()
 
 # Compara arquivos
+print "\n\n# Iniciando Comparacao: "
+print "-> ~%s Comparacoes" % arquivos_esquerda.__len__()
+idx = 1
 for filepath_esquerda in arquivos_esquerda:
     file_esquerda = filepath_esquerda.replace(diretorio_esquerda, "")
     file_direita_existe = False
+
+    print "-> %s de %s -- %s" % (idx, arquivos_esquerda.__len__(), file_esquerda)
 
     for filepath_direita in arquivos_direita:
         file_direita = filepath_direita.replace(diretorio_direita, "")
@@ -65,6 +92,8 @@ for filepath_esquerda in arquivos_esquerda:
     if not file_direita_existe:
         out_diff += get_row('-', filepath_esquerda, ' -->', '?')
 
+    idx += 1
+
 # Verifica arquivos faltantes
 for filepath_direita in arquivos_direita:
     file_direita = filepath_direita.replace(diretorio_direita, "")
@@ -83,3 +112,6 @@ for filepath_direita in arquivos_direita:
 fp = open("diff_result.txt", 'w')
 fp.write(out_diff)
 fp.close()
+
+print "\n\n# Comparacao Finalizada:"
+print "-> Ver Resultado em diff_result.txt"
